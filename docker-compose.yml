@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  minerrig1_graphite:
+    image: graphiteapp/graphite-statsd:latest
+    depends_on:
+      - minerrig1_rabbitmq
+    volumes:
+      - $PWD/graphite-conf/carbon.conf:/opt/graphite/conf/carbon.conf
+      - $PWD/graphite-conf/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf
+      - $PWD/graphite-conf/storage-schemas.conf:/opt/graphite/conf/storage-schemas.conf
+  minerrig1_grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_DEFAULT_INSTANCE_NAME=minerrig1
+      - GF_SECURITY_ADMIN_USER=minerrig1
+      - GF_SECURITY_ADMIN_PASSWORD=Qgjk5234
+      - GF_SERVER_ROOT_URL=http://grafana.server.name
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel,grafana-simple-json-datasource  1.2.3
+    ports:
+      - "3000:3000"
+    depends_on:
+      - minerrig1_graphite
+  minerrig1_rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    environment: 
+      - RABBITMQ_DEFAULT_USER=minerrig1
+      - RABBITMQ_DEFAULT_PASS=Qgjk5234
