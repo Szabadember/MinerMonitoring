@@ -28,3 +28,11 @@ services:
     environment: 
       - RABBITMQ_DEFAULT_USER=minerrig1
       - RABBITMQ_DEFAULT_PASS=Qgjk5234
+  minerrig1_rabbit_forwarder:
+    build: ./rabbit-forwarder
+    environment:
+      - CARBON_SERVER=minerrig1_graphite
+      - AMQP_URL=amqp://minerrig1:Qgjk5234@minerrig1_rabbitmq:5672/%2F
+    depends_on:
+      - minerrig1_graphite
+      - minerrig1_rabbitmq
