@@ -5,10 +5,12 @@ import socket
 import struct
 import pickle
 import pika
+import urllib2
+import json
 
 CARBON_SERVER = os.getenv('CARBON_SERVER', '127.0.0.1')
 CARBON_PICKLE_PORT = os.getenv('CARBON_PICKLE_PORT', 2004)
-AMQP_URL = os.getenv('AMQP_URL', 'amqp://minerrig1:Qgjk5234@localhost:5672/%2F')
+AMQP_URL = os.getenv('AMQP_URL', 'amqp://user:password@localhost:5672/%2F')
 EXCHANGE_NAME = os.getenv('EXCHANGE_NAME', 'monitoring_exchange')
 
 def setupConsumer(url, exchange_name, callbackfnc):
@@ -42,6 +44,12 @@ def sendMetrics(sock, metricpairs):
     sock.sendall(size)
     sock.sendall(package)
 
+def fetchPoolData(poolApiUrl):
+    """ Fetches json data from the pool """
+    response = urllib2.urlopen(poolApiUrl)
+    jsonObj = json.load(response)
+    response.close()
+
 def callback(ch, method, properties, body):
     """ callback """
     sock = socket.socket()
@@ -64,3 +72,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+TODO: LOGGING
+TODO: parse pool for data
