@@ -13,10 +13,10 @@ export default class CarbonClient implements ICarbonClient {
     }
 
     public pushMetrics(metrics: Map<string, number>): Rx.Observable<void> {
-        const now = Date.now() / 1000.0;
+        const now = Math.round(Date.now() / 1000.0);
         const packetArr: string[] = [];
         metrics.forEach((value, topic) => {
-            const packet = topic + " " + value + " " + now;
+            const packet = topic + " " + value + " " + now + "\r\n";
             packetArr.push(packet);
         });
 
@@ -27,12 +27,17 @@ export default class CarbonClient implements ICarbonClient {
     private sendPacket(packet: string): Rx.Observable<void> {
         const request: Rx.Observable<void> = Rx.Observable.create((o: Rx.Observer<void>) => {
             const client = new net.Socket();
-            client.connect(this.port, this.host, () => {
-                client.write(packet, () => {
-                    o.complete();
-                    client.destroy();
+            try {
+                client.connect(this.port, this.host, () => {
+                    client.write(packet, () => {
+                        client.destroy();
+                        o.complete();
+                    });
                 });
-            });
+            } catch (err) {
+                client.destroy();
+                o.error(err);
+            }
         });
         return request;
     }
