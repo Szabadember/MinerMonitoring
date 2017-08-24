@@ -15,7 +15,7 @@ export default class RabbitClient implements IRabbitClient {
         const consumeObs = chObs.flatMap(ch => {
             const queuePromise = ch.assertExchange(this.exchangeName, "topic", {durable: false})
             .then(arg => {
-                const assertQueue = ch.assertQueue("", {exclusive: true});
+                const assertQueue = ch.assertQueue(this.queueName, {exclusive: true});
                 return assertQueue;
             })
             .then(arg => {
@@ -25,7 +25,10 @@ export default class RabbitClient implements IRabbitClient {
 
             const queueObs = Rx.Observable.fromPromise(queuePromise);
             const consumeObs = this.consume(ch, this.queueName, { noAck: true });
-            const resultObs = consumeObs.map(msg => new Map<string, number>([msg.fields.routing_key, msg.content.readDoubleLE(0)]));
+            const resultObs = consumeObs.map(msg => {
+                const value = parseFloat(msg.content.toString());
+                return new Map<string, number>([[msg.fields.routingKey, value]])
+            });
 
             return queueObs.flatMap(x => resultObs);
         });

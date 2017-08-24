@@ -2,7 +2,7 @@
 import pika
 import sys
 
-EXCHANGE_NAME = "monitoring_exchange"
+EXCHANGE_NAME = "exchange"
 
 parameters = pika.URLParameters('amqp://minerrig1:Qgjk5234@localhost:5672/%2F')
 connection = pika.BlockingConnection(parameters)

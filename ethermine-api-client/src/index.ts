@@ -5,8 +5,25 @@ import PoolStatsRepository from "./PoolStatsRepository/PoolStatsRepository";
 import ICarbonClient from "./CarbonClient/ICarbonClient";
 import CarbonClient from "./CarbonClient/CarbonClient";
 
+import IRabbitClient from "./RabbitClient/IRabbitClient";
+import RabbitClient from "./RabbitClient/RabbitClient";
+
 const carbon: ICarbonClient = new CarbonClient("127.0.0.1", 2003);
 const metrics = new Map<string, number>();
+const rabbit = new RabbitClient("amqp://minerrig1:Qgjk5234@localhost:5672", "exchange", "queue");
+
+rabbit.startConsumer().subscribe(
+    (msg) => {
+        let vals = "";
+        msg.forEach((value, key) => {
+            vals += key + ":" + value + ", ";
+        });
+        console.log("Next Message:", vals);
+    },
+    (e) => console.log("rabbit error:", e),
+    () => console.log("rabbit complete")
+);
+
 metrics.set("test1.qq", 555);
 metrics.set("test2.qq", 666);
 metrics.set("test3.qq", 777);
