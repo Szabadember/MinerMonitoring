@@ -5,6 +5,9 @@ services:
     image: graphiteapp/graphite-statsd:latest
     depends_on:
       - minerrig1_rabbitmq
+    ports:
+      - "2003:2003"
+      - "8080:80"
     volumes:
       - $PWD/graphite-conf/carbon.conf:/opt/graphite/conf/carbon.conf
       - $PWD/graphite-conf/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf
@@ -31,8 +34,14 @@ services:
   minerrig1_rabbit_forwarder:
     build: ./rabbit-forwarder
     environment:
-      - CARBON_SERVER=minerrig1_graphite
-      - AMQP_URL=amqp://minerrig1:Qgjk5234@minerrig1_rabbitmq:5672/%2F
+      - CARBON_HOST=minerrig1_graphite
+      - CARBON_PORT=2003
+      - RABBIT_URL=amqp://minerrig1:Qgjk5234@minerrig1_rabbitmq:5672/%2F
+      - RABBIT_EXCHANGE_NAME=exchange
+      - RABBIT_QUEUE_NAME=queue
+      - POOL_API_HOST=https://api.ethermine.org
+      - WALLET_ADDRESS=aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80
+      - POOL_POLLING_SCHEDULE=*/5 * * * *
     depends_on:
       - minerrig1_graphite
       - minerrig1_rabbitmq

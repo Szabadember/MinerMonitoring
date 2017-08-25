@@ -6,7 +6,7 @@ import IWorkerStatsDTO from "./model/IWorkerStatsDTO";
 import * as Rx from "rxjs/Rx";
 
 export interface IPoolStatsRepository {
-    getBasicPoolStats(): Rx.Observable<IBasicPoolStatsDTO[]>;
+    getBasicPoolStats(): Rx.Observable<IBasicPoolStatsDTO>;
     getBlockHistory(): Rx.Observable<IMinedBlockHistoryDTO[]>;
     getNetworkStats(): Rx.Observable<INetworkStatsDTO>;
     getMinerStats(miner: string): Rx.Observable<IMinerStatsDTO>;

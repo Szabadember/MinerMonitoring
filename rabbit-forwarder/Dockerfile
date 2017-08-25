@@ -1,8 +1,7 @@
-FROM python:2
+FROM node:8
 
 # Install pika
-RUN pip install pika
-
-COPY ./carbon-client.py /carbon-client.py
-
-ENTRYPOINT python /carbon-client.py
+COPY ./metrics-client /metrics-client/
+WORKDIR /metrics-client
+RUN npm install
+ENTRYPOINT npm start

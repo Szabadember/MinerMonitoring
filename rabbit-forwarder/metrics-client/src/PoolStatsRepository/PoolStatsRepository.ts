@@ -12,7 +12,7 @@ export default class PoolStatsRepository implements IPoolStatsRepository {
 
     constructor(private host: string) {}
 
-    public getBasicPoolStats(): Rx.Observable<IBasicPoolStatsDTO[]> {
+    public getBasicPoolStats(): Rx.Observable<IBasicPoolStatsDTO> {
         const path = "/poolStats";
         const request = this.getRequest(path);
         return request;
