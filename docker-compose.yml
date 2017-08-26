@@ -5,11 +5,6 @@ services:
     image: graphiteapp/graphite-statsd:latest
     depends_on:
       - minerrig1_rabbitmq
-    expose:
-      - "80"
-    ports:
-      - "2003:2003"
-      - "8080:80"
     volumes:
       - $PWD/graphite-conf/carbon.conf:/opt/graphite/conf/carbon.conf
       - $PWD/graphite-conf/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf

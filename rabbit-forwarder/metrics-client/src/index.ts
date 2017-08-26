@@ -51,16 +51,16 @@ const j = NodeScheduler.scheduleJob(POOL_POLLING_SCHEDULE, () => {
     poolStatsRepo.getMinerStats(WALLET_ADDRESS)
     .flatMap(dto => {
         const metricsMap = new Map<string, number>();
-        metricsMap.set("miners." + WALLET_ADDRESS + ".activeWorkers", dto.activeWorkers);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".averageHashrate", dto.averageHashrate);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".currentHashrate", dto.currentHashrate);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".invalidShares", dto.invalidShares);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".lastSeen", dto.lastSeen);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".reportedHashrate", dto.reportedHashrate);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".staleShares", dto.staleShares);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".unconfirmed", dto.unconfirmed);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".unpaid", dto.unpaid);
-        metricsMap.set("miners." + WALLET_ADDRESS + ".validShares", dto.validShares);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".activeWorkers", dto.activeWorkers);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".averageHashrate", dto.averageHashrate);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".currentHashrate", dto.currentHashrate);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".invalidShares", dto.invalidShares);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".lastSeen", dto.lastSeen);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".reportedHashrate", dto.reportedHashrate);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".staleShares", dto.staleShares);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".unconfirmed", dto.unconfirmed);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".unpaid", dto.unpaid);
+        metricsMap.set("pool.miners." + WALLET_ADDRESS + ".validShares", dto.validShares);
         return carbonClient.pushMetrics(metricsMap, dto.time);
     })
     .subscribe(
@@ -75,13 +75,13 @@ const j = NodeScheduler.scheduleJob(POOL_POLLING_SCHEDULE, () => {
         const obsArr: Rx.Observable<any>[] = [];
         dto.forEach(worker =>{
             const metricsMap = new Map<string, number>();
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".averageHashrate", worker.averageHashrate);
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".currentHashrate", worker.currentHashrate);
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".invalidShares", worker.invalidShares);
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".lastSeen", worker.lastSeen);
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".reportedHashrate", worker.reportedHashrate);
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".staleShares", worker.staleShares);
-            metricsMap.set("miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".validShares", worker.validShares);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".averageHashrate", worker.averageHashrate);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".currentHashrate", worker.currentHashrate);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".invalidShares", worker.invalidShares);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".lastSeen", worker.lastSeen);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".reportedHashrate", worker.reportedHashrate);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".staleShares", worker.staleShares);
+            metricsMap.set("pool.miners." + WALLET_ADDRESS + ".workers." + worker.worker + ".validShares", worker.validShares);
             const obs = carbonClient.pushMetrics(metricsMap, worker.time);
             obsArr.push(obs);
         });
