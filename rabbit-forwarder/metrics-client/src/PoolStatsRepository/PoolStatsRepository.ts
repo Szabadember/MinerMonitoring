@@ -46,7 +46,7 @@ export default class PoolStatsRepository implements IPoolStatsRepository {
         const request: Rx.Observable<string> = Rx.Observable.create((o: Rx.Observer<string>) => {
             try {
                 const url = new URL(path, this.host);
-                http.get(url, (response) => {
+                const request = http.get(url, (response) => {
                     response.on('data', (data: string) => {
                         o.next(data);
                     });
@@ -56,6 +56,9 @@ export default class PoolStatsRepository implements IPoolStatsRepository {
                     if(response.statusCode !== 200) {
                         o.error(response.statusCode);
                     }
+                });
+                request.on('error', err => {
+                    o.error(err);
                 });
             }
             catch (err) {

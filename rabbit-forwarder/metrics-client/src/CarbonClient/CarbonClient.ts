@@ -6,13 +6,13 @@ export default class CarbonClient implements ICarbonClient {
     
     constructor(private host: string, private port: number) {}
 
-    public pushMetric(topic: string, value: number, time?: number): Rx.Observable<void> {
+    public pushMetric(topic: string, value: number, time?: number): Rx.Observable<string> {
         const metricsMap = new Map<string, number>();
         metricsMap.set(topic, value);
         return this.pushMetrics(metricsMap, time);
     }
 
-    public pushMetrics(metrics: Map<string, number>, time?: number): Rx.Observable<void> {
+    public pushMetrics(metrics: Map<string, number>, time?: number): Rx.Observable<string> {
         const nowSeconds = Math.round(Date.now() / 1000.0);
         const timeStamp = (typeof time === "undefined" || time === null) ? nowSeconds : time;
         const packetArr: string[] = [];
@@ -25,13 +25,23 @@ export default class CarbonClient implements ICarbonClient {
         return request; 
     }
 
-    private sendPacket(packet: string): Rx.Observable<void> {
-        const request: Rx.Observable<void> = Rx.Observable.create((o: Rx.Observer<void>) => {
+    private sendPacket(packet: string): Rx.Observable<string> {
+        const request: Rx.Observable<string> = Rx.Observable.create((o: Rx.Observer<string>) => {
             const client = new net.Socket();
+            client.on("error", err => {
+                client.destroy();
+                o.error(err);
+            });
+            client.on("timeout", () => {
+                client.destroy();
+                o.error("timeout");
+            });
+
             try {
                 client.connect(this.port, this.host, () => {
                     client.write(packet, () => {
                         client.destroy();
+                        o.next(packet);
                         o.complete();
                     });
                 });

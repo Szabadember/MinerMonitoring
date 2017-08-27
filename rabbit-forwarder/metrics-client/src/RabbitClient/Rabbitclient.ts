@@ -10,46 +10,48 @@ export default class RabbitClient implements IRabbitClient {
     ) {}
 
     public startConsumer(): Rx.Observable<Map<string, number>> {
-        const connObs = Rx.Observable.fromPromise(amqp.connect(this.url));
-        const chObs = connObs.flatMap(conn => conn.createChannel());
-        const consumeObs = chObs.flatMap(ch => {
-            const queuePromise = ch.assertExchange(this.exchangeName, "topic", {durable: false})
-            .then(arg => {
-                const assertQueue = ch.assertQueue(this.queueName, {exclusive: true});
-                return assertQueue;
+        const obs: Rx.Observable<amqp.Message> = Rx.Observable.create((observer: Rx.Observer<amqp.Message>) => {
+            amqp.connect(this.url)
+            .then(conn => {
+                conn.on("error", err => observer.error(err));
+                return conn.createChannel();
             })
-            .then(arg => {
-                const bindQueue = ch.bindQueue(this.queueName, this.exchangeName, "*.#");
-                return bindQueue;
-            });
-
-            const queueObs = Rx.Observable.fromPromise(queuePromise);
-            const consumeObs = this.consume(ch, this.queueName, { noAck: true });
-            const resultObs = consumeObs.map(msg => {
-                const value = parseFloat(msg.content.toString());
-                return new Map<string, number>([[msg.fields.routingKey, value]])
-            });
-
-            return queueObs.flatMap(x => resultObs);
+            .then(ch => {
+                ch.on("error", err => observer.error(err));
+                return ch.assertExchange(this.exchangeName, "topic", {durable: false})
+                .then(arg => {
+                    const assertQueue = ch.assertQueue(this.queueName, {exclusive: true});
+                    return assertQueue;
+                })
+                .then(arg => {
+                    const bindQueue = ch.bindQueue(this.queueName, this.exchangeName, "*.#");
+                    return bindQueue;
+                })
+                .then(() => {
+                    let tag: string;
+                    let close$ = Rx.Observable.fromEvent(ch, 'close');
+                    let closeSub = close$.subscribe(() => observer.complete());
+                    try {
+                        ch.consume(this.queueName, (msg: amqp.Message) => {
+                            observer.next(msg);
+                        }, { noAck: true }).then(r => tag = r.consumerTag);
+                    } catch (error) {
+                        observer.error(error);
+                    }
+        
+                    return () => {
+                        closeSub.unsubscribe();
+                        ch.cancel(tag);
+                    }
+                })
+                .catch(err => observer.error(err));
+            })
+            .catch(err => observer.error(err));
         });
 
-        return consumeObs;
+        return obs.map(msg => {
+            const value = parseFloat(msg.content.toString());
+            return new Map<string, number>([[msg.fields.routingKey, value]])
+        });
     }
-
-    private consume(ch: amqp.Channel, queue: string, options?: amqp.Options.Consume): Rx.Observable<amqp.Message> {
-        return <Rx.Observable<amqp.Message>> Rx.Observable.create((observer: Rx.Observer<amqp.Message>) => {
-          let tag: string;
-          let close$ = Rx.Observable.fromEvent(ch, 'close');
-          let closeSub = close$.subscribe(() => observer.complete());
-    
-          ch.consume(queue, (msg: amqp.Message) => {
-            observer.next(msg);
-          }, options).then(r => tag = r.consumerTag);
-    
-          return () => {
-            closeSub.unsubscribe();
-            ch.cancel(tag);
-          }
-        });
-      }
 }
