@@ -23,8 +23,10 @@ def write_metric(name, value):
     sock.sendall(message)
     sock.close()
 
-def write_rabbit_metric(routing_key, message):
+def write_rabbit_metric(metric_name, message):
     """Sends a metric to RabbitMQ"""
+    message = str(message)
+    routing_key = '%s.%s' % (MACHINE_NAME, metric_name)
     parameters = pika.URLParameters(AMQP_URL)
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
@@ -32,8 +34,8 @@ def write_rabbit_metric(routing_key, message):
     channel.exchange_declare(exchange=EXCHANGE_NAME,
                              type='topic')
     result = channel.basic_publish(exchange=EXCHANGE_NAME,
-                          routing_key=routing_key,
-                          body=message)
+                                   routing_key=routing_key,
+                                   body=message)
     connection.close()
     return result
 
