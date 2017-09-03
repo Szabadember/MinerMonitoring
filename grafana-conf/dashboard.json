@@ -75,6 +75,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 6,
           "interval": null,
           "links": [],
@@ -118,6 +119,7 @@
             }
           ],
           "thresholds": "",
+          "timeFrom": "10m",
           "title": "Uptime",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -148,6 +150,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 7,
           "interval": null,
           "links": [],
@@ -192,6 +195,7 @@
             }
           ],
           "thresholds": "35,50",
+          "timeFrom": "10m",
           "title": "Max Current Fan Speed",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -222,6 +226,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 8,
           "interval": null,
           "links": [],
@@ -265,6 +270,7 @@
             }
           ],
           "thresholds": "60,85",
+          "timeFrom": "10m",
           "title": "Max Current GPU Temperature",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -296,6 +302,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 9,
           "interval": null,
           "links": [],
@@ -339,6 +346,7 @@
             }
           ],
           "thresholds": "",
+          "timeFrom": "10m",
           "title": "Average Current Hashrate per GPU",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -383,6 +391,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 11,
           "interval": null,
           "links": [],
@@ -426,7 +435,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "Difficulty",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -459,6 +468,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 12,
           "interval": null,
           "links": [],
@@ -502,7 +512,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "Block Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -535,6 +545,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 13,
           "interval": null,
           "links": [],
@@ -578,7 +589,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "Ethereum price",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -611,6 +622,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 14,
           "interval": null,
           "links": [],
@@ -654,7 +666,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "ETH price (BTC)",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -687,6 +699,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 17,
           "interval": null,
           "links": [],
@@ -730,7 +743,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "Valid shares",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -763,6 +776,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 18,
           "interval": null,
           "links": [],
@@ -806,7 +820,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "Stale shares",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -839,6 +853,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 19,
           "interval": null,
           "links": [],
@@ -882,7 +897,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": null,
+          "timeFrom": "20m",
           "title": "Invalid shares",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -926,6 +941,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 15,
           "interval": null,
           "links": [],
@@ -969,6 +985,7 @@
             }
           ],
           "thresholds": "0.333,0.666",
+          "timeFrom": "20m",
           "title": "Unpaid ETH",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -1000,6 +1017,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
+          "hideTimeOverride": true,
           "id": 16,
           "interval": null,
           "links": [],
@@ -1044,6 +1062,7 @@
             }
           ],
           "thresholds": "0.333,0.666",
+          "timeFrom": "20m",
           "title": "Unpaid USD",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -1682,6 +1701,103 @@
       "showTitle": false,
       "title": "Dashboard Row",
       "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_GRAPHITE}",
+          "fill": 1,
+          "id": 21,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "USD price",
+              "yaxis": 1
+            },
+            {
+              "alias": "difficulty",
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "alias(pool.price.usd, 'USD price')"
+            },
+            {
+              "refId": "B",
+              "target": "alias(scale(pool.difficulty, 0.000000000001), 'difficulty')"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Price vs Difficulty",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "currencyUSD",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "none",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
     }
   ],
   "schemaVersion": 14,
@@ -1691,7 +1807,7 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1719,5 +1835,5 @@
   },
   "timezone": "",
   "title": "Mining Stats",
-  "version": 6
+  "version": 8
 }
