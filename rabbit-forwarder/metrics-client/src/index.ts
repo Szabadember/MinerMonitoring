@@ -43,11 +43,11 @@ const retryPoll = (obs: Rx.Observable<string>) => {
 rabbitClient.startConsumer()
     .flatMap(messageMap => carbonClient.pushMetrics(messageMap))
     .retryWhen(errors => {
-        console.error("Failed to forward metrics, retrying in " + RETRY_DELAY_MS + "ms");
+        console.error(`Failed to forward metrics, retrying in ${RETRY_DELAY_MS} ms`);
         return errors.delay(RETRY_DELAY_MS);
     })
     .repeatWhen(o => {
-        console.info("RabbitMQ connection gracefully closed, restarting in " + RETRY_DELAY_MS + "ms");
+        console.info(`RabbitMQ connection gracefully closed, restarting in ${RETRY_DELAY_MS} ms`);
         return o.delay(RETRY_DELAY_MS)
     })
     .subscribe(

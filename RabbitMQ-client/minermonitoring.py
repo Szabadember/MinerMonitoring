@@ -6,7 +6,7 @@ import pika
 
 EXCHANGE_NAME = "exchange"
 AMQP_URL = "amqp://minerrig1:Qgjk5234@szabadember.synology.me:5672/%2F"
-CLAYMORE_SERVER = 'localhost'
+CLAYMORE_SERVER = '192.168.30.171'
 CLAYMORE_PORT = 3333
 CLAYMORE_STATS_MESSAGE = '{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}'
 
@@ -46,6 +46,7 @@ def get_stats():
     sock.sendall(CLAYMORE_STATS_MESSAGE)
     reply = sock.recv(1024)
     sock.close()
+    print reply
     return json.loads(reply)
 
 def main():
