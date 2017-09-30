@@ -69,8 +69,11 @@
                 this.claymoreClient.requestStats()
                     .Subscribe(
                         (d) => {
-                            // Create Tuples from d
-                            // Enqueue
+                            var tuples = d.ToMetrics("minerrig1");
+                            foreach (var tuple in tuples)
+                            {
+                                this.metricsQueue.Add(tuple);
+                            }
                         },
                         (e) => {
                             Console.WriteLine(e.ToString());

@@ -1,1 +1,3 @@
 **/node_modules
+RabbitMQ-client/CoreClient/bin
+RabbitMQ-client/CoreClient/obj

@@ -1,9 +1,15 @@
 namespace Entities
 {
+    using System;
     using System.Collections.Generic;
 
-    public class MiningStats
+    public class MiningStats: IMetricConvertible
     {
+        private readonly string KeyNameUptime = "uptime";
+        private readonly string KeyNamePrimaryCoin = "primarycoin";
+        private readonly string KeyNameSecondaryCoin = "secondarycoin";
+        private readonly string KeyNameGPU = "gpu{0}";
+
         public string MinerVersion { get; set; }
         public int UptimeMinutes { get; set; }
         public CoinStats PrimaryCoin { get; set; }
@@ -28,6 +34,28 @@ namespace Entities
             }
 
             return string.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n", l1, l2, l3, l4, l5, l6, l7);
+        }
+
+        public IEnumerable<Tuple<string, int>> ToMetrics(string topicPrefix)
+        {
+            Func<string, string> keyConverter = (key) => string.Format("{0}.{1}", topicPrefix, key);
+            var tupleList = new List<Tuple<string, int>>();
+            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameUptime), (int)this.UptimeMinutes));
+            var primaryCoinStats = this.PrimaryCoin.ToMetrics(keyConverter(KeyNamePrimaryCoin));
+            var secondaryCoinStats = this.SecondaryCoin.ToMetrics(keyConverter(KeyNameSecondaryCoin));
+            tupleList.AddRange(primaryCoinStats);
+            tupleList.AddRange(secondaryCoinStats);
+            
+            var actGPU = 0;
+            foreach (var gpu in this.GPUStats)
+            {
+                var gpuKey = string.Format(KeyNameGPU, actGPU);
+                var actGPUStats = gpu.ToMetrics(keyConverter(gpuKey));
+                tupleList.AddRange(actGPUStats);
+                actGPU += 1;
+            }
+
+            return tupleList;
         }
     }
 }
