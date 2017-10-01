@@ -25,14 +25,17 @@ namespace Entities
             return string.Format("{0}\n{1}\n{2}\n{3}\n", primaryString, secondaryString, tempString, fanString);
         }
 
-        public IEnumerable<Tuple<string, int>> ToMetrics(string topicPrefix)
+        public IEnumerable<Tuple<DateTime, string, long>> ToMetrics(DateTime timestamp, string topicPrefix)
         {
             Func<string, string> keyConverter = (key) => string.Format("{0}.{1}", topicPrefix, key);
-            var tupleList = new List<Tuple<string, int>>();
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNamePrimaryHashrate), (int)this.PrimaryHashrate));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameSecondaryHashrate), (int)this.SecondaryHashrate));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameFanspeed), (int)this.FanSpeed));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameTemperature), (int)this.Temperature));
+            var tupleList = new List<Tuple<DateTime, string, long>>();
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNamePrimaryHashrate), this.PrimaryHashrate));
+            if(this.SecondaryHashrate.HasValue)
+            {
+                tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameSecondaryHashrate), this.SecondaryHashrate.Value));
+            }
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameFanspeed), this.FanSpeed));
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameTemperature), this.Temperature));
 
             return tupleList;
         }

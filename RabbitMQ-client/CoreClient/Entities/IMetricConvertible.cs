@@ -5,6 +5,6 @@ namespace Entities
     
     public interface IMetricConvertible
     {
-        IEnumerable<Tuple<string, int>> ToMetrics(string topicPrefix);
+        IEnumerable<Tuple<DateTime, string, long>> ToMetrics(DateTime timestamp, string topicPrefix);
     }
 }

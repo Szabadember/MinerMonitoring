@@ -18,6 +18,7 @@ namespace CoreClient
         private readonly string OptionMetricsTopicPrefix = "topic_prefix";
         private readonly string OptionMetricsRetryCount = "retry_count";
 
+        public long GeneralMaxLogSize { get; set; }
         public string ClaymoreHost { get; private set; }
         public int ClaymorePort { get; private set; }
         public int? ClaymoreRetryCount { get; private set; }

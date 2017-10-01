@@ -30,15 +30,15 @@ namespace Entities
             return string.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n", l1, l2, l3, l4, l5, l6);
         }
 
-        public IEnumerable<Tuple<string, int>> ToMetrics(string topicPrefix)
+        public IEnumerable<Tuple<DateTime, string, long>> ToMetrics(DateTime timestamp, string topicPrefix)
         {
             Func<string, string> keyConverter = (key) => string.Format("{0}.{1}", topicPrefix, key);
-            var tupleList = new List<Tuple<string, int>>();
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameHashrate), (int)this.Hashrate));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameShares), (int)this.Shares));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameRejectedShares), (int)this.RejectedShares));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameInvalidShares), (int)this.InvalidShares));
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNamePoolSwitches), (int)this.PoolSwitches));
+            var tupleList = new List<Tuple<DateTime, string, long>>();
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameHashrate), this.Hashrate));
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameShares), this.Shares));
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameRejectedShares), this.RejectedShares));
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameInvalidShares), this.InvalidShares));
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNamePoolSwitches), this.PoolSwitches));
 
             return tupleList;
         }

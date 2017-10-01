@@ -9,13 +9,19 @@
     using Chroniton;
     using Chroniton.Jobs;
     using Chroniton.Schedules;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Console;
+    using Serilog.Extensions.Logging.File;
 
     class Program
     {
-        private BlockingCollection<Tuple<string, int>> metricsQueue;
+        private readonly string LoggingCategory = "MetricsClient";
+        private readonly string DefaultSettingsFileName = "settings.json";
+        private BlockingCollection<Tuple<DateTime, string, long>> metricsQueue;
         private SettingsManager settings;
         private ClaymoreClient claymoreClient;
         private RabbitProducer rabbitProducer;
+        private ILogger logger;
 
         public static void Main(string[] args)
         {
@@ -26,8 +32,15 @@
 
         public Program(string pathToSettings)
         {
-            pathToSettings = pathToSettings ?? "settings.json";
-            this.metricsQueue = new BlockingCollection<Tuple<string, int>>();
+            this.logger = new LoggerFactory()
+                .AddConsole()
+                .AddFile("Logs/log-{Date}.txt", LogLevel.Information, null, false, 10485760)
+                .CreateLogger(LoggingCategory);
+            this.logger.LogInformation("Metrics forwarder started!");
+            this.logger.LogInformation("Path to settings file used: {0}", pathToSettings);
+
+            pathToSettings = pathToSettings ?? DefaultSettingsFileName;
+            this.metricsQueue = new BlockingCollection<Tuple<DateTime, string, long>>();
             this.settings = new SettingsManager(pathToSettings);
             this.claymoreClient = new ClaymoreClient(
                 this.settings.ClaymoreHost,
@@ -48,43 +61,49 @@
             while (!this.metricsQueue.IsCompleted)
             {
                 var metric = this.metricsQueue.Take();
-                this.rabbitProducer.SendMetric(metric.Item1, metric.Item2)
+                this.rabbitProducer.SendMetric(metric.Item1, metric.Item2, metric.Item3)
                     .Subscribe(
-                        (val) => Console.WriteLine("Rabbit producer emitted value: {0}", val),
+                        (val) => this.logger.LogWarning("Rabbit producer emitted value: {0}", val),
                         (e) => {
                             this.metricsQueue.Add(metric); // try again later
-                            Console.WriteLine("Rabbit producer emitted error: {0}", e);
+                            this.logger.LogError("Rabbit producer emitted error: {0}", e);
+                            this.logger.LogWarning("Metric \"{0} - {1}:{2}\" put back into the queue!", metric.Item1, metric.Item2, metric.Item3);
                         },
-                        () => Console.WriteLine("Rabbit producer completed sending metric!"));
+                        () => this.logger.LogInformation("Rabbit producer completed for {0} - {1}:{2}!", metric.Item1, metric.Item2, metric.Item3));
             }
         }
 
         private void ScheduleClaymoreJob()
         {
-            Console.WriteLine("Scheduling Claymore Job!");
+            this.logger.LogDebug("Scheduling Claymore Job!");
             ISingularity singularity = Singularity.Instance;
             ISchedule schedule = new CronSchedule(settings.ClaymoreSchdeule);
             var job = new SimpleJob(scheduledTime => {
-                Console.WriteLine("Executing Claymore Job!");
+                this.logger.LogInformation("Executing claymore job!");
                 this.claymoreClient.requestStats()
                     .Subscribe(
                         (d) => {
-                            var tuples = d.ToMetrics("minerrig1");
+                            var utcDateTime = DateTime.UtcNow;
+                            var tuples = d.ToMetrics(utcDateTime, this.settings.MetricsTopicPrefix);
                             foreach (var tuple in tuples)
                             {
                                 this.metricsQueue.Add(tuple);
                             }
+                            this.logger.LogInformation("Claymore data queued!");
                         },
                         (e) => {
-                            Console.WriteLine(e.ToString());
+                            this.logger.LogError("Failed retrieving claymore data: {0}", e.ToString());
                         },
                         () => {
-                            Console.WriteLine("Getting claymore metrics completed!");
+                            this.logger.LogInformation("Claymore job completed!");
                         }
                     );
             });
-            singularity.ScheduleJob(schedule, job, true);
+            var scheduledJob = singularity.ScheduleJob(schedule, job, true);
+            var nextExecution = schedule.NextScheduledTime(scheduledJob);
             singularity.Start();
+            this.logger.LogDebug("Claymore Job scheduled with schedule: {0}!", schedule.ToString());
+            this.logger.LogDebug("Claymore Job's next scheduled execution: {0}!", nextExecution);
         }
     }
 }

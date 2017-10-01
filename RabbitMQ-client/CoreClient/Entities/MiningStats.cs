@@ -36,13 +36,13 @@ namespace Entities
             return string.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n", l1, l2, l3, l4, l5, l6, l7);
         }
 
-        public IEnumerable<Tuple<string, int>> ToMetrics(string topicPrefix)
+        public IEnumerable<Tuple<DateTime, string, long>> ToMetrics(DateTime timestamp, string topicPrefix)
         {
             Func<string, string> keyConverter = (key) => string.Format("{0}.{1}", topicPrefix, key);
-            var tupleList = new List<Tuple<string, int>>();
-            tupleList.Add(new Tuple<string, int>(keyConverter(KeyNameUptime), (int)this.UptimeMinutes));
-            var primaryCoinStats = this.PrimaryCoin.ToMetrics(keyConverter(KeyNamePrimaryCoin));
-            var secondaryCoinStats = this.SecondaryCoin.ToMetrics(keyConverter(KeyNameSecondaryCoin));
+            var tupleList = new List<Tuple<DateTime, string, long>>();
+            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameUptime), (int)this.UptimeMinutes));
+            var primaryCoinStats = this.PrimaryCoin.ToMetrics(timestamp, keyConverter(KeyNamePrimaryCoin));
+            var secondaryCoinStats = this.SecondaryCoin.ToMetrics(timestamp, keyConverter(KeyNameSecondaryCoin));
             tupleList.AddRange(primaryCoinStats);
             tupleList.AddRange(secondaryCoinStats);
             
@@ -50,7 +50,7 @@ namespace Entities
             foreach (var gpu in this.GPUStats)
             {
                 var gpuKey = string.Format(KeyNameGPU, actGPU);
-                var actGPUStats = gpu.ToMetrics(keyConverter(gpuKey));
+                var actGPUStats = gpu.ToMetrics(timestamp, keyConverter(gpuKey));
                 tupleList.AddRange(actGPUStats);
                 actGPU += 1;
             }
