@@ -1,0 +1,15 @@
+{
+    "ClaymoreSettings": {
+        "host": "localhost",
+        "port": 2000,
+        "retry_count": 3,
+        "schedule": ""
+    },
+    "MetricsServerSettings": {
+        "url": "amqp://root:blabla@localhost:3772",
+        "exchange_name": "exchange",
+        "queue_name": "queue",
+        "topic_prefix": "minerrig1",
+        "retry_count": 3
+    }
+}

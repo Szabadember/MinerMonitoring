@@ -39,19 +39,27 @@
             this.logger.LogInformation("Metrics forwarder started!");
             this.logger.LogInformation("Path to settings file used: {0}", pathToSettings);
 
-            pathToSettings = pathToSettings ?? DefaultSettingsFileName;
-            this.metricsQueue = new BlockingCollection<Tuple<DateTime, string, long>>();
-            this.settings = new SettingsManager(pathToSettings);
-            this.claymoreClient = new ClaymoreClient(
-                this.settings.ClaymoreHost,
-                this.settings.ClaymorePort,
-                this.settings.ClaymoreRetryCount);
-            this.rabbitProducer = new RabbitProducer(
-                this.settings.MetricsURL,
-                this.settings.MetricsExchangeName,
-                this.settings.MetricsQueueName,
-                this.settings.MetricsTopicPrefix,
-                this.settings.MetricsRetryCount);
+            try
+            {
+                pathToSettings = pathToSettings ?? DefaultSettingsFileName;
+                this.metricsQueue = new BlockingCollection<Tuple<DateTime, string, long>>();
+                this.settings = new SettingsManager(pathToSettings);
+                this.claymoreClient = new ClaymoreClient(
+                    this.settings.ClaymoreHost,
+                    this.settings.ClaymorePort,
+                    this.settings.ClaymoreRetryCount);
+                this.rabbitProducer = new RabbitProducer(
+                    this.settings.MetricsURL,
+                    this.settings.MetricsExchangeName,
+                    this.settings.MetricsQueueName,
+                    this.settings.MetricsTopicPrefix,
+                    this.settings.MetricsRetryCount);
+            }
+            catch (Exception e)
+            {
+                this.logger.LogCritical("Exception caught: {0}", e);
+                throw e;
+            }
         }
 
         private void Run()
