@@ -1,12 +1,12 @@
 {
     "ClaymoreSettings": {
-        "host": "localhost",
-        "port": 2000,
+        "host": "192.168.30.171",
+        "port": 3333,
         "retry_count": 3,
-        "schedule": ""
+        "schedule": "0 */3 * ? * ? *"
     },
     "MetricsServerSettings": {
-        "url": "amqp://root:blabla@localhost:3772",
+        "url": "amqp://minerrig1:Qgjk5234@jumanjy.no-ip.org:5672/%2F",
         "exchange_name": "exchange",
         "queue_name": "queue",
         "topic_prefix": "minerrig1",

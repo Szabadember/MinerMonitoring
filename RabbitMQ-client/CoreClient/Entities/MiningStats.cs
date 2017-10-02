@@ -16,12 +16,17 @@ namespace Entities
         public CoinStats SecondaryCoin { get; set; }
         public IEnumerable<GPUStats> GPUStats { get; set; }
 
+        public MiningStats()
+        {
+            this.GPUStats = new List<GPUStats>();
+        }
+
         public override string ToString()
         {
             var l1 = string.Format("Miner version: {0}", this.MinerVersion);
             var l2 = string.Format("Uptime: {0} minutes", this.UptimeMinutes);
             var l3 = "\nPrimary Coin's stats:";
-            var l4 = this.PrimaryCoin.ToString();
+            var l4 = this.PrimaryCoin != null ? this.PrimaryCoin.ToString() : "off";
             var l5 = "\nSecondary Coin's stats:";
             var l6 = this.SecondaryCoin != null ? this.SecondaryCoin.ToString() : "off";
             var l7 = "\nGPU stats:\n";
@@ -41,11 +46,19 @@ namespace Entities
             Func<string, string> keyConverter = (key) => string.Format("{0}.{1}", topicPrefix, key);
             var tupleList = new List<Tuple<DateTime, string, long>>();
             tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameUptime), (int)this.UptimeMinutes));
-            var primaryCoinStats = this.PrimaryCoin.ToMetrics(timestamp, keyConverter(KeyNamePrimaryCoin));
-            var secondaryCoinStats = this.SecondaryCoin.ToMetrics(timestamp, keyConverter(KeyNameSecondaryCoin));
-            tupleList.AddRange(primaryCoinStats);
-            tupleList.AddRange(secondaryCoinStats);
-            
+
+            if (this.PrimaryCoin != null)
+            {
+                var primaryCoinStats = this.PrimaryCoin.ToMetrics(timestamp, keyConverter(KeyNamePrimaryCoin));
+                tupleList.AddRange(primaryCoinStats);
+            }
+
+            if (this.SecondaryCoin != null)
+            {
+                var secondaryCoinStats = this.SecondaryCoin.ToMetrics(timestamp, keyConverter(KeyNameSecondaryCoin));
+                tupleList.AddRange(secondaryCoinStats);
+            }
+
             var actGPU = 0;
             foreach (var gpu in this.GPUStats)
             {

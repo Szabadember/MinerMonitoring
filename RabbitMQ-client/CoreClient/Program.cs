@@ -91,16 +91,23 @@
                 this.claymoreClient.requestStats()
                     .Subscribe(
                         (d) => {
-                            var utcDateTime = DateTime.UtcNow;
-                            var tuples = d.ToMetrics(utcDateTime, this.settings.MetricsTopicPrefix);
-                            foreach (var tuple in tuples)
+                            try
                             {
-                                this.metricsQueue.Add(tuple);
+                                var utcDateTime = DateTime.UtcNow;
+                                var tuples = d.ToMetrics(utcDateTime, this.settings.MetricsTopicPrefix);
+                                foreach (var tuple in tuples)
+                                {
+                                    this.metricsQueue.Add(tuple);
+                                }
+                                this.logger.LogInformation("Claymore data queued!");
                             }
-                            this.logger.LogInformation("Claymore data queued!");
+                            catch (Exception e)
+                            {
+                                this.logger.LogError("Failed to process claymore data: {0}", e);
+                            }
                         },
                         (e) => {
-                            this.logger.LogError("Failed retrieving claymore data: {0}", e.ToString());
+                            this.logger.LogError("Failed retrieving claymore data: {0}", e);
                         },
                         () => {
                             this.logger.LogInformation("Claymore job completed!");

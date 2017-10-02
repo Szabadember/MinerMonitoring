@@ -7,9 +7,17 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/CoreClient/CoreClient.csproj"
+                "${workspaceRoot}"
             ],
             "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "test",
+            "args": [
+                "${workspaceRoot}"
+            ],
+            "isTestCommand": true,
             "problemMatcher": "$msCompile"
         }
     ]

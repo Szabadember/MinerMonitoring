@@ -19,6 +19,16 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (Tests)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/CoreClient.Test/bin/Debug/netcoreapp2.0/CoreClient.Test.dll",
+            "args": [],
+            "cwd": "${workspaceRoot}/CoreClient.Test",
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
