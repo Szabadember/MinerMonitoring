@@ -6,6 +6,8 @@ namespace CoreClient
 
     public class SettingsManager
     {
+        private readonly string SectionNameGeneral = "GeneralSettings";
+        private readonly string OptionGeneralWallet = "wallet";
         private readonly string SectionNameClaymore = "ClaymoreSettings";
         private readonly string OptionClaymoreHost = "host";
         private readonly string OptionClaymorePort = "port";
@@ -18,7 +20,7 @@ namespace CoreClient
         private readonly string OptionMetricsTopicPrefix = "topic_prefix";
         private readonly string OptionMetricsRetryCount = "retry_count";
 
-        public long GeneralMaxLogSize { get; set; }
+        public string GeneralWallet { get; set; }
         public string ClaymoreHost { get; private set; }
         public int ClaymorePort { get; private set; }
         public int? ClaymoreRetryCount { get; private set; }
@@ -36,8 +38,11 @@ namespace CoreClient
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(configFilePath);
             var config = builder.Build();
+            var generalSection = config.GetSection(SectionNameGeneral);
             var claymoreSection = config.GetSection(SectionNameClaymore);
             var metricsSection = config.GetSection(SectionNameMetrics);
+
+            this.GeneralWallet = generalSection[OptionGeneralWallet];
 
             this.ClaymoreHost = claymoreSection[OptionClaymoreHost];
             this.ClaymorePort = int.Parse(claymoreSection[OptionClaymorePort]);

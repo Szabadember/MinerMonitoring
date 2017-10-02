@@ -1,4 +1,7 @@
 {
+    "GeneralSettings": {
+        "wallet": "aaaa"
+    },
     "ClaymoreSettings": {
         "host": "192.168.30.171",
         "port": 3333,

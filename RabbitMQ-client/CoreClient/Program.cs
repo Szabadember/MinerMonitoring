@@ -99,6 +99,7 @@
                                 {
                                     this.metricsQueue.Add(tuple);
                                 }
+                                this.metricsQueue.Add(this.InjectWallet(utcDateTime));
                                 this.logger.LogInformation("Claymore data queued!");
                             }
                             catch (Exception e)
@@ -119,6 +120,14 @@
             singularity.Start();
             this.logger.LogDebug("Claymore Job scheduled with schedule: {0}!", schedule.ToString());
             this.logger.LogDebug("Claymore Job's next scheduled execution: {0}!", nextExecution);
+        }
+
+        private Tuple<DateTime, string, long> InjectWallet(DateTime date)
+        {
+            var key = string.Format("{0}.wallet", this.settings.MetricsTopicPrefix);
+            var walletAddress = long.Parse(this.settings.GeneralWallet);
+            var t = new Tuple<DateTime, string, long>(date, key, walletAddress);
+            return t;
         }
     }
 }
