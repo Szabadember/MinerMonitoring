@@ -29,10 +29,15 @@ namespace CoreClient
 
         public IObservable<Unit> SendMetric(DateTime timestamp, string routingKey, long value)
         {
+            var valueStr = string.Format("{0}", value);
+            return this.SendStringMetric(timestamp, routingKey, valueStr);
+        }
+
+        public IObservable<Unit> SendStringMetric(DateTime timestamp, string routingKey, string valueStr)
+        {
             var unixTimestamp = (Int64)(timestamp.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             var obs = Observable.Create<Unit>((observer) => {
                 try {
-                    var valueStr = string.Format("{0}", value);
                     var messageBodyBytes = System.Text.Encoding.UTF8.GetBytes(valueStr);
                     var factory = new ConnectionFactory();
                     factory.Uri = new Uri(this.Url);

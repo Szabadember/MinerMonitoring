@@ -30,15 +30,16 @@ namespace Entities
             return string.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n", l1, l2, l3, l4, l5, l6);
         }
 
-        public IEnumerable<Tuple<DateTime, string, long>> ToMetrics(DateTime timestamp, string topicPrefix)
+        public IEnumerable<Tuple<DateTime, string, string>> ToMetrics(DateTime timestamp, string topicPrefix)
         {
             Func<string, string> keyConverter = (key) => string.Format("{0}.{1}", topicPrefix, key);
-            var tupleList = new List<Tuple<DateTime, string, long>>();
-            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameHashrate), this.Hashrate));
-            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameShares), this.Shares));
-            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameRejectedShares), this.RejectedShares));
-            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNameInvalidShares), this.InvalidShares));
-            tupleList.Add(new Tuple<DateTime, string, long>(timestamp, keyConverter(KeyNamePoolSwitches), this.PoolSwitches));
+            Func<long, string> valueConverter = (x) => string.Format("{0}", x);
+            var tupleList = new List<Tuple<DateTime, string, string>>();
+            tupleList.Add(new Tuple<DateTime, string, string>(timestamp, keyConverter(KeyNameHashrate), valueConverter(this.Hashrate)));
+            tupleList.Add(new Tuple<DateTime, string, string>(timestamp, keyConverter(KeyNameShares), valueConverter(this.Shares)));
+            tupleList.Add(new Tuple<DateTime, string, string>(timestamp, keyConverter(KeyNameRejectedShares), valueConverter(this.RejectedShares)));
+            tupleList.Add(new Tuple<DateTime, string, string>(timestamp, keyConverter(KeyNameInvalidShares), valueConverter(this.InvalidShares)));
+            tupleList.Add(new Tuple<DateTime, string, string>(timestamp, keyConverter(KeyNamePoolSwitches), valueConverter(this.PoolSwitches)));
 
             return tupleList;
         }

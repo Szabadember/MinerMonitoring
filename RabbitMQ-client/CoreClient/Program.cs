@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Reactive.Concurrency;
     using System.Reactive.Linq;
     using System.Threading;
@@ -17,7 +18,7 @@
     {
         private readonly string LoggingCategory = "MetricsClient";
         private readonly string DefaultSettingsFileName = "settings.json";
-        private BlockingCollection<Tuple<DateTime, string, long>> metricsQueue;
+        private BlockingCollection<Tuple<DateTime, string, string>> metricsQueue;
         private SettingsManager settings;
         private ClaymoreClient claymoreClient;
         private RabbitProducer rabbitProducer;
@@ -42,7 +43,7 @@
             try
             {
                 pathToSettings = pathToSettings ?? DefaultSettingsFileName;
-                this.metricsQueue = new BlockingCollection<Tuple<DateTime, string, long>>();
+                this.metricsQueue = new BlockingCollection<Tuple<DateTime, string, string>>();
                 this.settings = new SettingsManager(pathToSettings);
                 this.claymoreClient = new ClaymoreClient(
                     this.settings.ClaymoreHost,
@@ -64,12 +65,19 @@
 
         private void Run()
         {
-            this.ScheduleClaymoreJob();
+            try
+            {
+                this.ScheduleClaymoreJob();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogCritical("Exception caught: {0}", e);
+            }
 
             while (!this.metricsQueue.IsCompleted)
             {
                 var metric = this.metricsQueue.Take();
-                this.rabbitProducer.SendMetric(metric.Item1, metric.Item2, metric.Item3)
+                this.rabbitProducer.SendStringMetric(metric.Item1, metric.Item2, metric.Item3)
                     .Subscribe(
                         (val) => this.logger.LogWarning("Rabbit producer emitted value: {0}", val),
                         (e) => {
@@ -122,12 +130,11 @@
             this.logger.LogDebug("Claymore Job's next scheduled execution: {0}!", nextExecution);
         }
 
-        private Tuple<DateTime, string, long> InjectWallet(DateTime date)
+        private Tuple<DateTime, string, string> InjectWallet(DateTime date)
         {
             var key = string.Format("{0}.wallet", this.settings.MetricsTopicPrefix);
-            var walletAddress = long.Parse(this.settings.GeneralWallet);
-            var t = new Tuple<DateTime, string, long>(date, key, walletAddress);
-            return t;
+            var tuple = new Tuple<DateTime, string, string>(date, key, this.settings.GeneralWallet);
+            return tuple;
         }
     }
 }
