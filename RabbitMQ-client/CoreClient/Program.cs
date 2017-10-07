@@ -72,6 +72,7 @@
             catch (Exception e)
             {
                 this.logger.LogCritical("Exception caught: {0}", e);
+                throw e;
             }
 
             while (!this.metricsQueue.IsCompleted)
