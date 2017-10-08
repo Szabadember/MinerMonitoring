@@ -12,7 +12,7 @@ namespace CoreClientExtensions
         /// An exponential back off strategy which starts with 1 second and then 4, 9, 16...
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-        public static readonly Func<int, TimeSpan> ExponentialBackoff = n => TimeSpan.FromSeconds(Math.Pow(n, 2));
+        public static readonly Func<int, TimeSpan> ExponentialBackoff = n => TimeSpan.FromSeconds(Math.Pow(n, 2) * 5);
 
         /// <summary>
         /// Returns a cold observable which retries (re-subscribes to) the source observable on error up to the 

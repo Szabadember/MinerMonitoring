@@ -4,14 +4,17 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Reactive;
     using System.Reactive.Concurrency;
     using System.Reactive.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using Chroniton;
     using Chroniton.Jobs;
     using Chroniton.Schedules;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Console;
+    using RabbitMQ.Client;
     using Serilog.Extensions.Logging.File;
 
     class Program
@@ -21,21 +24,22 @@
         private BlockingCollection<Tuple<DateTime, string, string>> metricsQueue;
         private SettingsManager settings;
         private ClaymoreClient claymoreClient;
-        private RabbitProducer rabbitProducer;
         private ILogger logger;
 
         public static void Main(string[] args)
         {
-            var pathToSettings = (args.Length == 1) ? args[0] : null;
-            var p = new Program(pathToSettings);
-            p.Run();
+            var pathToSettings = (args.Length > 0) ? args[0] : null;
+            var loglevel = (args.Length > 1 && args[1] == "debug") ? LogLevel.Debug : LogLevel.Information;
+            var p = new Program(pathToSettings, loglevel);
+            var task = p.Run();
+            task.Wait();
         }
 
-        public Program(string pathToSettings)
+        public Program(string pathToSettings, LogLevel loglevel)
         {
             this.logger = new LoggerFactory()
-                .AddConsole()
-                .AddFile("Logs/log-{Date}.txt", LogLevel.Information, null, false, 10485760)
+                .AddConsole(loglevel)
+                .AddFile("Logs/log-{Date}.txt", loglevel, null, false, 10485760)
                 .CreateLogger(LoggingCategory);
             this.logger.LogInformation("Metrics forwarder started!");
             this.logger.LogInformation("Path to settings file used: {0}", pathToSettings);
@@ -49,12 +53,6 @@
                     this.settings.ClaymoreHost,
                     this.settings.ClaymorePort,
                     this.settings.ClaymoreRetryCount);
-                this.rabbitProducer = new RabbitProducer(
-                    this.settings.MetricsURL,
-                    this.settings.MetricsExchangeName,
-                    this.settings.MetricsQueueName,
-                    this.settings.MetricsTopicPrefix,
-                    this.settings.MetricsRetryCount);
             }
             catch (Exception e)
             {
@@ -63,7 +61,7 @@
             }
         }
 
-        private void Run()
+        private async Task Run()
         {
             try
             {
@@ -77,16 +75,48 @@
 
             while (!this.metricsQueue.IsCompleted)
             {
-                var metric = this.metricsQueue.Take();
-                this.rabbitProducer.SendStringMetric(metric.Item1, metric.Item2, metric.Item3)
-                    .Subscribe(
-                        (val) => this.logger.LogWarning("Rabbit producer emitted value: {0}", val),
-                        (e) => {
-                            this.metricsQueue.Add(metric); // try again later
-                            this.logger.LogError("Rabbit producer emitted error: {0}", e);
-                            this.logger.LogWarning("Metric \"{0} - {1}:{2}\" put back into the queue!", metric.Item1, metric.Item2, metric.Item3);
-                        },
-                        () => this.logger.LogInformation("Rabbit producer completed for {0} - {1}:{2}!", metric.Item1, metric.Item2, metric.Item3));
+                var lastTaken = this.metricsQueue.Take();
+                try {
+                    var factory = new ConnectionFactory();
+                    factory.Uri = new Uri(this.settings.MetricsURL);
+                
+                    using (var conn = factory.CreateConnection())
+                    {
+                        using (var ch = conn.CreateModel())
+                        {
+                            ch.ExchangeDeclare(this.settings.MetricsExchangeName, ExchangeType.Topic);
+                            var numPublished = 0;
+                            do
+                            {
+                                var timestamp = lastTaken.Item1;
+                                var routingKey = lastTaken.Item2;
+                                var valueStr = lastTaken.Item3;
+
+                                var props = ch.CreateBasicProperties();
+                                var unixTimestamp = (Int64)(timestamp.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                                var messageBodyBytes = System.Text.Encoding.UTF8.GetBytes(valueStr);
+
+                                props.Timestamp = new AmqpTimestamp(unixTimestamp);
+                                ch.BasicPublish(this.settings.MetricsExchangeName,
+                                            routingKey,
+                                            props,
+                                            messageBodyBytes);
+                                ++numPublished;
+                                this.logger.LogDebug("Metric \"{0} - {1}:{2}\" published successfully!", timestamp, routingKey, valueStr);
+                                lastTaken = this.metricsQueue.Take();
+                            } while (this.metricsQueue.Count > 0);
+                            this.logger.LogInformation("{0} metrics published successfully!", numPublished);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.metricsQueue.Add(lastTaken);
+                    this.logger.LogError("Error while trying to send metric {0}", e);
+                    this.logger.LogWarning("Metric \"{0} - {1}:{2}\" was put back into the queue!", lastTaken.Item1, lastTaken.Item2, lastTaken.Item3);
+                    this.logger.LogInformation("Waiting {0} seconds before retrying to send metrics!", this.settings.MetricsRetryDelay);
+                    await Task.Delay(this.settings.MetricsRetryDelay * 1000);
+                }
             }
         }
 

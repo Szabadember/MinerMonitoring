@@ -16,9 +16,8 @@ namespace CoreClient
         private readonly string SectionNameMetrics = "MetricsServerSettings";
         private readonly string OptionMetricsURL = "url";
         private readonly string OptionMetricsExchangeName = "exchange_name";
-        private readonly string OptionMetricsQueueName = "queue_name";
         private readonly string OptionMetricsTopicPrefix = "topic_prefix";
-        private readonly string OptionMetricsRetryCount = "retry_count";
+        private readonly string OptionMetricsRetryDelay = "retry_delay_seconds";
 
         public string GeneralWallet { get; set; }
         public string ClaymoreHost { get; private set; }
@@ -28,9 +27,8 @@ namespace CoreClient
 
         public string MetricsURL { get; private set; }
         public string MetricsExchangeName { get; private set; }
-        public string MetricsQueueName { get; private set; }
         public string MetricsTopicPrefix { get; private set; }
-        public int MetricsRetryCount { get; private set; }
+        public int MetricsRetryDelay { get; private set; }
 
         public SettingsManager(string configFilePath)
         {
@@ -51,9 +49,8 @@ namespace CoreClient
 
             this.MetricsURL = metricsSection[OptionMetricsURL];
             this.MetricsExchangeName = metricsSection[OptionMetricsExchangeName];
-            this.MetricsQueueName = metricsSection[OptionMetricsQueueName];
             this.MetricsTopicPrefix = metricsSection[OptionMetricsTopicPrefix];
-            this.MetricsRetryCount = int.Parse(metricsSection[OptionMetricsRetryCount]);
+            this.MetricsRetryDelay = int.Parse(metricsSection[OptionMetricsRetryDelay]);
         }
     }
 }
