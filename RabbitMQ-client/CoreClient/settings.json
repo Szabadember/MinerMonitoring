@@ -1,18 +1,17 @@
 {
     "GeneralSettings": {
-        "wallet": "aaaa"
+        "wallet": "{wallet-address}"
     },
     "ClaymoreSettings": {
-        "host": "192.168.30.171",
+        "host": "127.0.0.1",
         "port": 3333,
         "retry_count": 3,
-        "schedule": "0 */3 * ? * ? *"
+        "schedule": "0 */5 * ? * ? *"
     },
     "MetricsServerSettings": {
-        "url": "amqp://minerrig1:Qgjk5234@jumanjy.no-ip.org:5672/%2F",
+        "url": "amqp://{user}:{password}@{url}:{port}/%2F",
         "exchange_name": "exchange",
-        "queue_name": "queue",
-        "topic_prefix": "minerrig1",
-        "retry_count": 3
+        "topic_prefix": "{machine-name}",
+        "retry_delay_seconds": 30
     }
 }
