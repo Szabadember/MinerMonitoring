@@ -1,0 +1,1 @@
+echo "This is the dummy reboot script" | tee logfile.txt

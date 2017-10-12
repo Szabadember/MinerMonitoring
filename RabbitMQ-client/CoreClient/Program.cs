@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Reactive;
     using System.Reactive.Concurrency;
     using System.Reactive.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
     using Chroniton;
@@ -148,6 +150,10 @@
                         },
                         (e) => {
                             this.logger.LogError("Failed retrieving claymore data: {0}", e);
+                            if (this.settings.ClaymoreShouldReboot)
+                            {
+                                this.ExecuteRebootCommand();
+                            }
                         },
                         () => {
                             this.logger.LogInformation("Claymore job completed!");
@@ -166,6 +172,24 @@
             var key = string.Format("{0}.wallet", this.settings.MetricsTopicPrefix);
             var tuple = new Tuple<DateTime, string, string>(date, key, this.settings.GeneralWallet);
             return tuple;
+        }
+
+        private void ExecuteRebootCommand()
+        {
+            this.logger.LogWarning("Rebooting...");
+            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            var script = isWindows ? this.settings.ClaymoreRebootScript : "/bin/sh";
+            var args = isWindows ? "" : this.settings.ClaymoreRebootScript;
+            var procStartInfo = new ProcessStartInfo(script, args)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+
+            var proc = new Process { StartInfo = procStartInfo };
+            proc.Start();
+            proc.WaitForExit();
+            this.logger.LogInformation("Reboot process ended with: {0}", proc.ExitCode);
         }
     }
 }

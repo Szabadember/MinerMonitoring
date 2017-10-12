@@ -5,8 +5,10 @@
     "ClaymoreSettings": {
         "host": "127.0.0.1",
         "port": 3333,
-        "retry_count": 3,
-        "schedule": "0 */5 * ? * ? *"
+        "retry_count": 4,
+        "schedule": "0 */5 * ? * ? *",
+        "reboot_script": "./reboot.sh",
+        "should_reboot": true
     },
     "MetricsServerSettings": {
         "url": "amqp://{user}:{password}@{url}:{port}/%2F",

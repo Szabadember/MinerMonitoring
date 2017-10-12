@@ -12,6 +12,8 @@ namespace CoreClient
         private readonly string OptionClaymoreHost = "host";
         private readonly string OptionClaymorePort = "port";
         private readonly string OptionClaymoreRetryCount = "retry_count";
+        private readonly string OptionClaymoreRebootCommand = "reboot_script";
+        private readonly string OptionClaymoreRebootOnFailure = "should_reboot";
         private readonly string OptionClaymoreSchedule = "schedule";
         private readonly string SectionNameMetrics = "MetricsServerSettings";
         private readonly string OptionMetricsURL = "url";
@@ -23,6 +25,8 @@ namespace CoreClient
         public string ClaymoreHost { get; private set; }
         public int ClaymorePort { get; private set; }
         public int? ClaymoreRetryCount { get; private set; }
+        public bool ClaymoreShouldReboot { get; private set; }
+        public string ClaymoreRebootScript { get; private set; }
         public string ClaymoreSchdeule { get; private set; }
 
         public string MetricsURL { get; private set; }
@@ -46,6 +50,8 @@ namespace CoreClient
             this.ClaymorePort = int.Parse(claymoreSection[OptionClaymorePort]);
             this.ClaymoreRetryCount = int.Parse(claymoreSection[OptionClaymoreRetryCount]);
             this.ClaymoreSchdeule = claymoreSection[OptionClaymoreSchedule];
+            this.ClaymoreShouldReboot = bool.Parse(claymoreSection[OptionClaymoreRebootOnFailure]);
+            this.ClaymoreRebootScript = claymoreSection[OptionClaymoreRebootCommand];
 
             this.MetricsURL = metricsSection[OptionMetricsURL];
             this.MetricsExchangeName = metricsSection[OptionMetricsExchangeName];
