@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_GRAPHITE",
-      "label": "Graphite",
+      "name": "DS_DS_GRAPHITE",
+      "label": "DS_GRAPHITE",
       "description": "",
       "type": "datasource",
       "pluginId": "graphite",
@@ -65,7 +65,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": null,
           "format": "m",
           "gauge": {
@@ -141,7 +141,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "format": "percent",
           "gauge": {
             "maxValue": 100,
@@ -191,7 +191,7 @@
             {
               "hide": false,
               "refId": "A",
-              "target": "maxSeries(minerrig1.*.fanspeed)"
+              "target": "maxSeries(minerrig1.gpu*.fanspeed)"
             }
           ],
           "thresholds": "35,50",
@@ -217,7 +217,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "format": "celsius",
           "gauge": {
             "maxValue": 100,
@@ -266,7 +266,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "maxSeries(minerrig1.*.temperature)"
+              "target": "maxSeries(minerrig1.gpu*.temperature)"
             }
           ],
           "thresholds": "60,85",
@@ -292,7 +292,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": 3,
           "format": "ops",
           "gauge": {
@@ -342,12 +342,268 @@
           "targets": [
             {
               "refId": "A",
-              "target": "averageSeries(scale(minerrig1.*.hashrate, 1000))"
+              "target": "averageSeries(scale(minerrig1.gpu*.hashrate, 1000))"
             }
           ],
           "thresholds": "",
           "timeFrom": "10m",
           "title": "Average Current Hashrate per GPU",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "${DS_DS_GRAPHITE}",
+          "decimals": 4,
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "hideTimeOverride": true,
+          "id": 29,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "hide": true,
+              "refId": "A",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "hide": true,
+              "refId": "B",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "hide": false,
+              "refId": "C",
+              "target": "scale(diffSeries(#B, #A), 1e-18)",
+              "targetFull": "scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)), 1e-18)"
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": "1d/d",
+          "timeShift": null,
+          "title": "Today's unpaid so far",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "${DS_DS_GRAPHITE}",
+          "decimals": 4,
+          "format": "none",
+          "gauge": {
+            "maxValue": 1,
+            "minValue": 0,
+            "show": true,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "hideTimeOverride": true,
+          "id": 15,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "refId": "A",
+              "target": "scale(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, 1e-18)"
+            }
+          ],
+          "thresholds": "0.333,0.666",
+          "timeFrom": "20m",
+          "title": "Unpaid ETH",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "${DS_DS_GRAPHITE}",
+          "decimals": 0,
+          "format": "currencyUSD",
+          "gauge": {
+            "maxValue": 1,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "hideTimeOverride": true,
+          "id": 16,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "refId": "A",
+              "target": "multiplySeries(scale(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, 1e-18), pool.price.usd)",
+              "textEditor": true
+            }
+          ],
+          "thresholds": "0.333,0.666",
+          "timeFrom": "30m",
+          "title": "Unpaid USD",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -380,7 +636,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": null,
           "description": "Latest",
           "format": "none",
@@ -435,7 +691,8 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
+          "timeShift": null,
           "title": "Difficulty",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -457,7 +714,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": 1,
           "description": "Latest",
           "format": "s",
@@ -512,7 +769,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
           "title": "Block Time",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -534,7 +791,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": null,
           "description": "Current",
           "format": "currencyUSD",
@@ -589,7 +846,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
           "title": "Ethereum price",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -611,7 +868,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": 5,
           "description": "Current",
           "format": "none",
@@ -666,7 +923,7 @@
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
           "title": "ETH price (BTC)",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -688,7 +945,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": null,
           "description": "Last 1h",
           "format": "short",
@@ -739,11 +996,11 @@
           "targets": [
             {
               "refId": "A",
-              "target": "pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.validShares"
+              "target": "pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.validShares"
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
           "title": "Valid shares",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -765,7 +1022,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": null,
           "description": "Last 1h",
           "format": "short",
@@ -816,11 +1073,11 @@
           "targets": [
             {
               "refId": "A",
-              "target": "pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.staleShares"
+              "target": "pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.staleShares"
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
           "title": "Stale shares",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -842,7 +1099,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": null,
           "description": "Last 1h",
           "format": "short",
@@ -893,11 +1150,11 @@
           "targets": [
             {
               "refId": "A",
-              "target": "pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.invalidShares"
+              "target": "pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.invalidShares"
             }
           ],
           "thresholds": "",
-          "timeFrom": "20m",
+          "timeFrom": "30m",
           "title": "Invalid shares",
           "type": "singlestat",
           "valueFontSize": "80%",
@@ -920,7 +1177,7 @@
     },
     {
       "collapse": false,
-      "height": 250,
+      "height": 84,
       "panels": [
         {
           "cacheTimeout": null,
@@ -931,18 +1188,17 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
-          "decimals": 4,
+          "datasource": "${DS_DS_GRAPHITE}",
           "format": "none",
           "gauge": {
-            "maxValue": 1,
+            "maxValue": 100,
             "minValue": 0,
-            "show": true,
+            "show": false,
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
           "hideTimeOverride": true,
-          "id": 15,
+          "id": 23,
           "interval": null,
           "links": [],
           "mappingType": 1,
@@ -956,7 +1212,7 @@
               "value": 2
             }
           ],
-          "maxDataPoints": 100,
+          "maxDataPoints": "",
           "nullPointMode": "connected",
           "nullText": null,
           "postfix": "",
@@ -970,7 +1226,7 @@
               "to": "null"
             }
           ],
-          "span": 6,
+          "span": 4,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -981,12 +1237,13 @@
           "targets": [
             {
               "refId": "A",
-              "target": "scale(pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.unpaid, 0.000000000000000001)"
+              "target": "minerrig1.primarycoin.shares"
             }
           ],
-          "thresholds": "0.333,0.666",
-          "timeFrom": "20m",
-          "title": "Unpaid ETH",
+          "thresholds": "",
+          "timeFrom": "15m",
+          "timeShift": null,
+          "title": "Shares since boot",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1007,18 +1264,17 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_GRAPHITE}",
-          "decimals": 0,
-          "format": "currencyUSD",
+          "datasource": "${DS_DS_GRAPHITE}",
+          "format": "none",
           "gauge": {
-            "maxValue": 1,
+            "maxValue": 100,
             "minValue": 0,
             "show": false,
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
           "hideTimeOverride": true,
-          "id": 16,
+          "id": 24,
           "interval": null,
           "links": [],
           "mappingType": 1,
@@ -1032,7 +1288,7 @@
               "value": 2
             }
           ],
-          "maxDataPoints": 100,
+          "maxDataPoints": "",
           "nullPointMode": "connected",
           "nullText": null,
           "postfix": "",
@@ -1046,7 +1302,7 @@
               "to": "null"
             }
           ],
-          "span": 6,
+          "span": 4,
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
@@ -1057,13 +1313,89 @@
           "targets": [
             {
               "refId": "A",
-              "target": "multiplySeries(scale(pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.unpaid, 1e-18), pool.price.usd)",
-              "textEditor": true
+              "target": "minerrig1.primarycoin.rejectedshares"
             }
           ],
-          "thresholds": "0.333,0.666",
-          "timeFrom": "20m",
-          "title": "Unpaid USD",
+          "thresholds": "",
+          "timeFrom": "15m",
+          "timeShift": null,
+          "title": "Rejected shares since boot",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "${DS_DS_GRAPHITE}",
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "hideTimeOverride": true,
+          "id": 25,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": "",
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "span": 4,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "refId": "A",
+              "target": "minerrig1.primarycoin.invalidshares"
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": "15m",
+          "timeShift": null,
+          "title": "Invalid shares since boot",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1125,7 +1457,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "fill": 1,
           "id": 2,
           "legend": {
@@ -1154,7 +1486,7 @@
             {
               "hide": false,
               "refId": "A",
-              "target": "alias(scale(minerrig1.hashrate, 1000), 'total hashrate')",
+              "target": "alias(scale(minerrig1.primarycoin.hashrate, 1000), 'total hashrate')",
               "textEditor": false
             }
           ],
@@ -1219,7 +1551,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "fill": 0,
           "id": 20,
           "legend": {
@@ -1247,15 +1579,18 @@
           "targets": [
             {
               "refId": "A",
-              "target": "alias(pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.reportedHashrate, 'Reported hashrate')"
+              "target": "alias(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.reportedHashrate, 'Reported hashrate')",
+              "textEditor": true
             },
             {
               "refId": "B",
-              "target": "alias(pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.averageHashrate, '24h average effective hashrate')"
+              "target": "alias(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.averageHashrate, '24h average effective hashrate')",
+              "textEditor": true
             },
             {
               "refId": "C",
-              "target": "alias(pool.miners.aa32e28bb20a1f8fcde8c24c6f4d0a84c64f4c80.currentHashrate, 'Current effective hashrate')"
+              "target": "alias(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.currentHashrate, 'Current effective hashrate')",
+              "textEditor": true
             }
           ],
           "thresholds": [],
@@ -1311,7 +1646,7 @@
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "fill": 1,
           "id": 5,
           "legend": {
@@ -1339,7 +1674,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "aliasByNode(scale(minerrig1.*.hashrate, 1000), 1)"
+              "target": "aliasByNode(scale(minerrig1.gpu*.hashrate, 1000), 1)"
             }
           ],
           "thresholds": [],
@@ -1385,7 +1720,7 @@
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "fill": 1,
           "id": 10,
           "legend": {
@@ -1413,7 +1748,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "aliasByNode(scale(minerrig1.*.hashrate, 1000), 1)"
+              "target": "aliasByNode(scale(minerrig1.gpu*.hashrate, 1000), 1)"
             }
           ],
           "thresholds": [],
@@ -1504,7 +1839,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": 0,
           "fill": 0,
           "id": 3,
@@ -1533,7 +1868,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "aliasByNode(minerrig1.*.temperature, 1)"
+              "target": "aliasByNode(minerrig1.gpu*.temperature, 1)"
             }
           ],
           "thresholds": [
@@ -1618,7 +1953,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "decimals": 0,
           "fill": 0,
           "id": 4,
@@ -1647,7 +1982,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "aliasByNode(minerrig1.*.fanspeed, 1)"
+              "target": "aliasByNode(minerrig1.gpu*.fanspeed, 1)"
             }
           ],
           "thresholds": [
@@ -1711,7 +2046,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_GRAPHITE}",
+          "datasource": "${DS_DS_GRAPHITE}",
           "fill": 1,
           "id": 21,
           "legend": {
@@ -1798,6 +2133,382 @@
       "showTitle": false,
       "title": "Dashboard Row",
       "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_DS_GRAPHITE}",
+          "fill": 0,
+          "id": 22,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(minerrig1.gpu*.hashrate, 1)"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Hashrates per GPU",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 245,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_DS_GRAPHITE}",
+          "fill": 1,
+          "id": 26,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "hide": true,
+              "refId": "A",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"min\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "hide": true,
+              "refId": "B",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"max\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "refId": "C",
+              "target": "alias(scale(diffSeries(#B, #A), 1e-18), '\"ETH per hour\"')",
+              "targetFull": "alias(scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"min\", alignToFrom=False)), 1e-18), '\"ETH per hour\"')"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Hourly income",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 257,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_DS_GRAPHITE}",
+          "fill": 1,
+          "id": 27,
+          "legend": {
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "hide": true,
+              "refId": "A",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "hide": true,
+              "refId": "B",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "refId": "C",
+              "target": "alias(scale(diffSeries(#B, #A), 1e-18), '\"ETH per day\"')",
+              "targetFull": "alias(scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)), 1e-18), '\"ETH per day\"')"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "7d",
+          "timeShift": null,
+          "title": "Daily income of last 7 days",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_DS_GRAPHITE}",
+          "fill": 1,
+          "hideTimeOverride": false,
+          "id": 28,
+          "legend": {
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "hide": true,
+              "refId": "A",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"min\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "hide": true,
+              "refId": "B",
+              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"max\", alignToFrom=False)",
+              "textEditor": true
+            },
+            {
+              "refId": "C",
+              "target": "alias(scale(diffSeries(#B, #A), 1e-18), '\"ETH per day\"')",
+              "targetFull": "alias(scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"min\", alignToFrom=False)), 1e-18), '\"ETH per day\"')"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "4w",
+          "timeShift": null,
+          "title": "Weekly income of last 4 weeks",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
     }
   ],
   "schemaVersion": 14,
@@ -1835,5 +2546,5 @@
   },
   "timezone": "",
   "title": "Mining Stats",
-  "version": 8
+  "version": 13
 }
