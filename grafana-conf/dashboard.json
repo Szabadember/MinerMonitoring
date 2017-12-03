@@ -429,22 +429,10 @@
           "tableColumn": "",
           "targets": [
             {
-              "hide": true,
-              "refId": "A",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)",
-              "textEditor": true
-            },
-            {
-              "hide": true,
-              "refId": "B",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False)",
-              "textEditor": true
-            },
-            {
               "hide": false,
-              "refId": "C",
-              "target": "scale(diffSeries(#B, #A), 1e-18)",
-              "targetFull": "scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)), 1e-18)"
+              "refId": "A",
+              "target": "scale(smartSummarize(derivative(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid), '1d', 'sum'), 1e-18)",
+              "textEditor": true
             }
           ],
           "thresholds": "",
@@ -2220,7 +2208,7 @@
     },
     {
       "collapse": false,
-      "height": 245,
+      "height": 268,
       "panels": [
         {
           "aliasColors": {},
@@ -2228,7 +2216,9 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_DS_GRAPHITE}",
+          "decimals": 5,
           "fill": 1,
+          "hideTimeOverride": true,
           "id": 26,
           "legend": {
             "avg": false,
@@ -2236,8 +2226,8 @@
             "max": false,
             "min": false,
             "show": true,
-            "total": false,
-            "values": false
+            "total": true,
+            "values": true
           },
           "lines": false,
           "linewidth": 1,
@@ -2254,27 +2244,16 @@
           "steppedLine": false,
           "targets": [
             {
-              "hide": true,
+              "hide": false,
               "refId": "A",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"min\", alignToFrom=False)",
+              "target": "alias(scale(smartSummarize(derivative(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid), '1h', 'sum'), 1e-18), 'ETH per hour')",
               "textEditor": true
-            },
-            {
-              "hide": true,
-              "refId": "B",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"max\", alignToFrom=False)",
-              "textEditor": true
-            },
-            {
-              "refId": "C",
-              "target": "alias(scale(diffSeries(#B, #A), 1e-18), '\"ETH per hour\"')",
-              "targetFull": "alias(scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1h\",  func=\"min\", alignToFrom=False)), 1e-18), '\"ETH per hour\"')"
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Hourly income",
+          "timeFrom": "1d/d+1d",
+          "timeShift": "1d/d",
+          "title": "Yesterday's hourly income",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2325,7 +2304,9 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_DS_GRAPHITE}",
+          "decimals": 6,
           "fill": 1,
+          "hideTimeOverride": true,
           "id": 27,
           "legend": {
             "avg": true,
@@ -2351,26 +2332,15 @@
           "steppedLine": false,
           "targets": [
             {
-              "hide": true,
+              "hide": false,
               "refId": "A",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)",
+              "target": "alias(scale(smartSummarize(derivative(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid), '1d', 'sum'), 1e-18), 'ETH per day')",
               "textEditor": true
-            },
-            {
-              "hide": true,
-              "refId": "B",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False)",
-              "textEditor": true
-            },
-            {
-              "refId": "C",
-              "target": "alias(scale(diffSeries(#B, #A), 1e-18), '\"ETH per day\"')",
-              "targetFull": "alias(scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1d\",  func=\"min\", alignToFrom=False)), 1e-18), '\"ETH per day\"')"
             }
           ],
           "thresholds": [],
-          "timeFrom": "7d",
-          "timeShift": null,
+          "timeFrom": "6d",
+          "timeShift": "1d/d",
           "title": "Daily income of last 7 days",
           "tooltip": {
             "shared": true,
@@ -2449,21 +2419,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "hide": true,
+              "hide": false,
               "refId": "A",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"min\", alignToFrom=False)",
+              "target": "alias(scale(smartSummarize(derivative(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid), '1w', 'sum'), 1e-18), 'ETH per week')",
               "textEditor": true
-            },
-            {
-              "hide": true,
-              "refId": "B",
-              "target": "summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"max\", alignToFrom=False)",
-              "textEditor": true
-            },
-            {
-              "refId": "C",
-              "target": "alias(scale(diffSeries(#B, #A), 1e-18), '\"ETH per day\"')",
-              "targetFull": "alias(scale(diffSeries(summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"max\", alignToFrom=False), summarize(pool.miners.22F9e2caA4d44bd5826cE0b5A2f529290f3215be.unpaid, \"1w\",  func=\"min\", alignToFrom=False)), 1e-18), '\"ETH per day\"')"
             }
           ],
           "thresholds": [],
@@ -2518,7 +2477,7 @@
     "list": []
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -2546,5 +2505,5 @@
   },
   "timezone": "",
   "title": "Mining Stats",
-  "version": 13
+  "version": 23
 }
